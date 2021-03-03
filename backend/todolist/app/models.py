@@ -1,12 +1,14 @@
-from .__init__ import db
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 
-class TodoList(db.Model):
+from app.config import Base
+
+class TodoList(Base):
     """
     Table for storing the list of todo items
     """
     
     __tablename__ = "todo_list"
 
-    list_item_id = db.Column(db.Integer, primary_key=True)
+    list_item_id = Column(Integer, primary_key=True)
 
-    todo_content = db.Column(db.String)
+    todo_content = Column(String)

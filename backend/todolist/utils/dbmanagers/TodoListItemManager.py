@@ -1,14 +1,12 @@
-from flask import current_app as app
-
-from app.models import db, TodoList
+from app.models import TodoList
 
 class TodoListItemManager():
     """
     This class handles all the database interactions, via ORM, related to the todo_list table
     """
 
-    def __init__(self):
-        pass
+    def __init__(self, db):
+        self.__db_request_session = db
 
     def insert(self, content):
         """
@@ -22,21 +20,22 @@ class TodoListItemManager():
         success = True
 
         data_rec = TodoList()
-        data_rec.todo_content = content
+        data_rec.todo_content = content.todo_content
 
-        db.session.add(data_rec)
+        self.__db_request_session.add(data_rec)
 
         try:
-            db.session.commit()
+            self.__db_request_session.commit()
+            self.__db_request_session.refresh(data_rec)
         
         except Exception as e:
-            db.session.rollback()
-            db.session.flush()
-            app.logger.debug("Exception: {}".format(e))
+            self.__db_request_session.rollback()
+            self.__db_request_session.flush()
+            # app.logger.debug("Exception: {}".format(e))
 
-            return not success
+            return not success, None
         
-        return success
+        return success, data_rec.list_item_id
 
     def get_todo_list(self):
         """
@@ -49,9 +48,9 @@ class TodoListItemManager():
         success = True
 
         try:
-            items = TodoList.query.all()
+            items = self.__db_request_session.query(TodoList).all()
         except Exception as e:
-            app.logger.debug("Exception: {}".format(e))
+            # app.logger.debug("Exception: {}".format(e))
             return not success, []
 
         return True, items

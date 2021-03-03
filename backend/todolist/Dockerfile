@@ -1,4 +1,4 @@
-FROM python:3.7
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.7
 
 RUN pip3 install --upgrade pip 
 
@@ -6,11 +6,10 @@ WORKDIR /app
 
 COPY requirements.txt .
 
-
 RUN apt-get update
 
 #installing python packages
-RUN pip3 --no-cache-dir install -r requirements.txt
+RUN pip3 install -r requirements.txt
 
 COPY . .
 
