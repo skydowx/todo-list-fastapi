@@ -1,7 +1,5 @@
 from json import dumps
 
-from flask import current_app as app
-
 from utils.dbmanagers.TodoListItemManager import TodoListItemManager
 
 class TodoListManager():
@@ -12,7 +10,7 @@ class TodoListManager():
     def __init__(self):
         self.__todo_list_item_manager = None # for the TodoListItem Database Manager
 
-    def insert_list_item(self, content):
+    def insert_list_item(self, db, content):
         """
         This function inserts a todo task in the database
 
@@ -23,20 +21,20 @@ class TodoListManager():
         """
         
         # initializing managers
-        self.__todo_list_item_manager = TodoListItemManager()
+        self.__todo_list_item_manager = TodoListItemManager(db)
 
-        insertion_success = self.__todo_list_item_manager.insert(content)
+        insertion_success, list_item_id = self.__todo_list_item_manager.insert(content)
 
         if insertion_success:
             status_code = 201
-            response_msg = {"message": "A new todo item has been added to the database."}
+            response_msg = {"message": "Data Insertion successful", "list_item_id": list_item_id, "todo_content": content.todo_content}
         else:
             status_code = 500
             response_msg = {"message": "Data Insertion failed"}
 
-        return status_code, dumps(response_msg) 
+        return status_code, response_msg 
 
-    def fetch_todo_items(self):
+    def fetch_todo_items(self, db):
         """
         The function fetches all the todo items from the database
 
@@ -45,7 +43,7 @@ class TodoListManager():
         """
 
         # initializing managers
-        self.__todo_list_item_manager = TodoListItemManager()
+        self.__todo_list_item_manager = TodoListItemManager(db)
 
         status_code = 200
         response_msg = {"message": "Fetch successful!"}
@@ -55,10 +53,10 @@ class TodoListManager():
         if not status:
             status_code = 500
             response_msg = {"message": "Fetch failed!"}
-            return status_code, dumps(response_msg)
+            return status_code, response_msg
 
-        todo_list = list(map(lambda item: {"list_item_id": item.list_item_id, "content": item.todo_content}, todo_list))
+        todo_list = list(map(lambda item: {"list_item_id": item.list_item_id, "todo_content": item.todo_content}, todo_list))
 
         response_msg["todo_list"] = todo_list
 
-        return status_code, dumps(response_msg)
+        return status_code, response_msg

@@ -1,14 +1,12 @@
+from os import environ, path
 
-from os import path, environ
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
-class Config:
-    """Set Flask configuration from .env file"""
+SQLALCHEMY_DATABASE_URL = 'postgresql://' + environ["POSTGRES_USERNAME"] + ':' + environ["POSTGRES_PASSWORD"] + '@' + environ["POSTGRES_HOST"] + '/' + environ["POSTGRES_DATABASE"]
 
-    # General Configurations
-    FLASK_APP = environ.get('FLASK_APP')
-    FLASK_ENV = environ.get('FLASK_ENV')
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-    # Database
-    SQLALCHEMY_DATABASE_URI = 'postgresql://' + environ["POSTGRES_USERNAME"] + ':' + environ["POSTGRES_PASSWORD"] + '@' + environ["POSTGRES_HOST"] + '/' + environ["POSTGRES_DATABASE"]
-    SQLALCHEMY_ECHO = True
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
+Base = declarative_base()

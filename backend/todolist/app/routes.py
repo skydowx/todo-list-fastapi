@@ -1,25 +1,34 @@
 """Application routes"""
+from fastapi import Depends, APIRouter, Response
+from sqlalchemy.orm import Session
 
-from flask import current_app as app, Response
-from flask import request, jsonify
+import app.schemas as schemas
+from app.config import Base, SessionLocal, engine
 
 from utils.TodoListManager import TodoListManager
 
-@app.route('/insertListItem', methods=['POST'])
-def insert_list_item():
-    try: 
-        content = request.get_json()['content']
-    except KeyError:
-        message = "insertListItem expects a string in the content key only"
-        return Response(message, status=500)
+# Dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
-    todo_content = content
+router = APIRouter()
 
-    status, message = TodoListManager().insert_list_item(todo_content)
+@router.get('/')
+def hello_world():
+    return "Hello, World"
 
-    return Response(message, status=status)
+@router.post('/insertListItem', response_model=schemas.Todo)
+def insert_list_item(todo_content: schemas.TodoCreate, response: Response, db: Session = Depends(get_db)):
+    status, message = TodoListManager().insert_list_item(db, todo_content)
+    response.status_code = status
+    return message
 
-@app.route('/fetchListItems', methods=['GET'])
-def fetch_list_items():
-    status, message = TodoListManager().fetch_todo_items()
-    return Response(message, status=status)
+@router.get('/fetchListItems', response_model=schemas.TodoFetch)
+def fetch_list_items(response: Response, db: Session = Depends(get_db)):
+    status, message = TodoListManager().fetch_todo_items(db)
+    response.status_code = status
+    return message
