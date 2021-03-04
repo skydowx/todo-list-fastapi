@@ -6,12 +6,12 @@ A simple todolist api project that deploys adminer, postgres, and fastapi in sep
 docker-compose up
 ```
 
-### Migrations
-- Change models.
-```
-docker-compose up --build
-<wait for the containers to go online>
-docker-compose exec todolist bash
-alembic revision --autogenerate -m "Revision Message"
-```
+## Migrations
+- Make your changes in the models.
+- Start the project using `docker-compose up --build -d`
+- Wait for the containers to go online.
+- Open a shell in the todolist container using `docker-compose exec todolist bash`
+- Run the following to make changes `alembic revision --autogenerate -m "Revision Message"`
+- exit the shell and run `docker-compose down`
+
 Next time you build the project, `alembic upgrade head` in docker-entrypoint.sh will make the relevant changes in the database.
