@@ -11,4 +11,4 @@ class TodoList(Base):
 
     list_item_id = Column(Integer, primary_key=True)
 
-    todo_content = Column(String)
+    todo_content = Column(String(512))

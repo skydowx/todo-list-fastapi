@@ -26,6 +26,8 @@ services:
     command: sh ./docker-entrypoint.sh
     volumes: 
     - ./backend/todolist/:/app
+    depends_on:
+    - postgres
     restart: always
     ports:
     - 5050:5050
