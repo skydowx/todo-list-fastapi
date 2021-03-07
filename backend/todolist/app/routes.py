@@ -23,12 +23,18 @@ def hello_world():
 
 @router.post('/insertListItem', response_model=schemas.Todo)
 def insert_list_item(todo_content: schemas.TodoCreate, response: Response, db: Session = Depends(get_db)):
-    status, message = TodoListManager().insert_list_item(db, todo_content)
+    status, message = TodoListManager().insert_todo_item(db, todo_content)
     response.status_code = status
     return message
 
-@router.get('/fetchListItems', response_model=schemas.TodoFetch)
+@router.get('/fetchListItems')
 def fetch_list_items(response: Response, db: Session = Depends(get_db)):
     status, message = TodoListManager().fetch_todo_items(db)
+    response.status_code = status
+    return message
+
+@router.get('/getListItem')
+def get_list_item(todo_item_id: int, response: Response, db: Session = Depends(get_db)):
+    status, message = TodoListManager().get_todo_item(db, todo_item_id)
     response.status_code = status
     return message

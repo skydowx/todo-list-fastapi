@@ -3,3 +3,5 @@ db_data
 __pycache__/
 
 todolist-env
+
+.env

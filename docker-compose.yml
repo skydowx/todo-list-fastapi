@@ -16,6 +16,8 @@ services:
   adminer:
     image: adminer
     restart: always
+    depends_on:
+    - postgres
     ports:
     - 8090:8080
     environment:
@@ -36,3 +38,4 @@ services:
       POSTGRES_PASSWORD: $POSTGRES_PASSWORD
       POSTGRES_HOST: postgres
       POSTGRES_DATABASE: $TODOLIST_DB
+      MONGO_ATLAS_CONNECTION_STRING: $MONGO_ATLAS_CONNECTION_STRING
