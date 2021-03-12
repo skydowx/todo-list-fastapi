@@ -34,10 +34,31 @@ class TodoListItemManager():
             # app.logger.debug("Exception: {}".format(e))
 
             return not success, None
-        
+
         return success, data_rec.list_item_id
 
-    def get_todo_list(self):
+    def get(self, _id):
+        """
+        Retrieve a single todolist item by it's id
+        
+        :param _id: (int) unique id of a todolist item
+        :returns:   (boolean) True/False based on retrieval success
+                    (dict)    Record that was retrieved
+        """
+
+        success = True
+
+        try:
+            item = self.__db_request_session.query(TodoList).get(_id)
+        except Exception as e:
+            # app.logger.debug("Exception: {}".format(e))
+            return not success, None
+
+        return True, item
+        
+        
+
+    def get_list(self):
         """
         Fetches all entries in the todo_list table.
 
